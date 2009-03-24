@@ -410,7 +410,7 @@ class TestChanges(unittest.TestCase):
         expected = {
         "category":[ 
           { "id":"2", "path":"a", "data": { "_ref":"7", "label":"A" } },
-          { "id":"3", "path": "a.x", "data": { "_ref":"9", "label":"P" } },
+          { "id":"3", "path": "a.x", "data": "9" },
           { "id":"4", "path":"a.x.p", "data": { "_ref":"9", "label":"P" } },
           ]
         }
