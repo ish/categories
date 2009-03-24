@@ -394,6 +394,43 @@ class TestChanges(unittest.TestCase):
         print expected['category']
         assert actual == expected['category']
 
+    def test_addnew_nonroot(self):
+
+        facet = 'f'
+        category = 'uk'
+
+        before = {'category': [
+            {'path': 'uk', 'data': {'_ref': '0bf538d1c8b272fddde23068b52f2463', 'label': 'UK'}, 'id': '0bf538d1c8b272fddde23068b52f2463'}, 
+            {'path': 'uk.england', 'data': {'_ref': '59a6432dd70cbbd967f410f3f0e0c649', 'label': 'England'}, 'id': '59a6432dd70cbbd967f410f3f0e0c649'}, 
+            {'path': 'uk.england.lakedistrict', 'data': {'_ref': '383a3106a48a5ff1cf8aeb5aa2a57444', 'label': 'Lake District'}, 'id': '383a3106a48a5ff1cf8aeb5aa2a57444'}] }
+
+        expected = {
+             'category': [
+                 {'path': 'uk', 'data': {'_ref': '0bf538d1c8b272fddde23068b52f2463', 'label': 'UK'}, 'id': '0bf538d1c8b272fddde23068b52f2463'}, 
+                 {'path': 'uk.england', 'data': {'_ref': '59a6432dd70cbbd967f410f3f0e0c649', 'label': 'England'}, 'id': '59a6432dd70cbbd967f410f3f0e0c649'}, 
+                 {'path': 'uk.ireland', 'data': {'_ref': '10', 'label': 'Ireland'}, 'id': '10'}, 
+                 {'path': 'uk.england.lakedistrict', 'data': {'_ref': '383a3106a48a5ff1cf8aeb5aa2a57444', 'label': 'Lake District'}, 'id': '383a3106a48a5ff1cf8aeb5aa2a57444'}
+              ] }
+
+        data = {'category':
+        [{'data': {'_ref': u'59a6432dd70cbbd967f410f3f0e0c649', 'label': 'England'},
+          'id': u'59a6432dd70cbbd967f410f3f0e0c649',
+          'new_category': {'is_new': False, 'label': None},
+          'path': u'england'},
+         {'data': None,
+          'id': None,
+          'new_category': {'is_new': True, 'label': u'Ireland'},
+          'path': u'ireland'}]}
+
+       
+        actual = list(categories.apply_changes(before['category'], data['category'], facet, category, create))
+        expected['category'][2]['id'] = actual[2]['id']
+        print 'ACTUAL'
+        print actual
+        print 'EXPECTED'
+        print expected['category']
+        assert actual == expected['category']
+
     def test_new_ref(self):
 
         facet = 'f'
