@@ -77,27 +77,16 @@ def is_direct_child(root_path, c):
     return False
 
 def find_and_replace_changed_paths(old_facet_dict, data, base_category):
-    print 'OFD'
-    print old_facet_dict
-    print 'DATA'
-    print data
-    print 'base_category'
-    print repr(base_category)
     oc_by_id = {}
     for oc in old_facet_dict:
         oc_by_id[oc['id']] = oc
-    print 'OCbyID',
-    print oc_by_id
     for d in data:
         if d['id'] in oc_by_id:
-            print 'd',d
-            print 'oc',oc_by_id[d['id']]
             old_path = oc_by_id[d['id']]['path']
             if base_category is not None:
                 new_path = '%s.%s'%(base_category, d['path'])
             else:
                 new_path = d['path']
-            print 'newpath,oldpath',new_path, old_path
             if new_path != old_path:
                 rename_path_segment(old_facet_dict, old_path, new_path)
 
@@ -123,7 +112,6 @@ def reorder_from_data(old_facet_dict, data, facet, base_category):
         root_path = '%s.%s'%(facet, base_category)
     else:
         root_path = facet
-    print 'ROOT_PATH',root_path
     data_by_id = {}
     for d in old_facet_dict:
         data_by_id[d['id']] = d
