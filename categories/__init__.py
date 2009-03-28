@@ -60,10 +60,12 @@ def create_added_reference(facet_dict, root_path, data, create_category):
                 if d['id'] == item['id']:
                     d['data'] = new_item
 
-def rename_path_segment(facet_dict, old_path, new_path):
+def rename_path_segment(facet_dict, old_path, new_path, changelog):
     for c in facet_dict:
         if c['path'].startswith(old_path):
+            old = c['path']
             c['path'] = c['path'].replace(old_path, new_path, 1)
+            changelog.append( (old, c['path']) )
 
 def is_direct_child(root_path, c):
     facet_path = root_path.split('.')[0]
@@ -80,6 +82,7 @@ def find_and_replace_changed_paths(old_facet_dict, data, base_category):
     oc_by_id = {}
     for oc in old_facet_dict:
         oc_by_id[oc['id']] = oc
+    changelog = []
     for d in data:
         if d['id'] in oc_by_id:
             old_path = oc_by_id[d['id']]['path']
@@ -88,7 +91,8 @@ def find_and_replace_changed_paths(old_facet_dict, data, base_category):
             else:
                 new_path = d['path']
             if new_path != old_path:
-                rename_path_segment(old_facet_dict, old_path, new_path)
+                rename_path_segment(old_facet_dict, old_path, new_path, changelog)
+    return changelog
 
 def find_deleted(old_facet_dict, data, root_path):
     nc_by_id = {}
@@ -140,7 +144,7 @@ def apply_changes(old_facet_dict, data, facet, base_category, create_category):
     else:
         root_path = facet
     create_added_reference(old_facet_dict, root_path , data, create_category)
-    find_and_replace_changed_paths(old_facet_dict, data, base_category)
+    changelog = find_and_replace_changed_paths(old_facet_dict, data, base_category)
     categories = list(find_deleted(old_facet_dict, data, root_path))
     categories = list(reorder_from_data(categories, data, facet, base_category))
-    return categories
+    return categories, changelog
