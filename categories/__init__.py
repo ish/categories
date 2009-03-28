@@ -52,13 +52,17 @@ def create_added_reference(facet_dict, root_path, data, create_category):
             del item['new_category']['is_new']
             id = create_category(item['new_category'])
             item['new_category']['_ref'] = id
-            new_item = dict(item['new_category'])
-            if '_id' in new_item:
-                del new_item['_id']
-            data[n]['data'] = new_item
-            for d in facet_dict:
-                if d['id'] == item['id']:
-                    d['data'] = new_item
+            I = dict(item['new_category'])
+            if '_id' in I:
+                del I['_id']
+            data[n]['data'] = I
+        else:
+            I = item['data']
+            
+        for d in facet_dict:
+            if d['id'] == item['id']:
+                d['data'] = I
+        
 
 def rename_path_segment(facet_dict, old_path, new_path, changelog):
     for c in facet_dict:
@@ -133,7 +137,7 @@ def reorder_from_data(old_facet_dict, data, facet, base_category):
                 path = d['path']
             else:
                 path = '%s.%s'%(base_category,d['path'])
-            yield {'id': uuid.uuid4().hex, 'data': d['new_category'], 'path': path}
+            yield {'id': uuid.uuid4().hex, 'data': d['data'], 'path': path}
     for d in after:
         yield d
         

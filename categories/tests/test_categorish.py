@@ -107,7 +107,7 @@ class Test(unittest.TestCase):
           ]
         }
 
-        data = { "category":[ { "id":"3", "path":"N", "data": "8", "new_category": {"is_new": False, "label": ""} }, ] }
+        data = { "category":[ { "id":"3", "path":"N", "data": {"_ref":"8", "label":"X"}, "new_category": {"is_new": False, "label": ""} }, ] }
 
         categories.find_and_replace_changed_paths(before['category'], data['category'], category)
         assert before == expected
@@ -133,7 +133,7 @@ class Test(unittest.TestCase):
           ]
         }
 
-        data = { "category":[ { "id":"3", "path":"N", "data": "8", "new_category": {"is_new": False, "label": ""} }, ] }
+        data = { "category":[ { "id":"3", "path":"N", "data": {"_ref":"8", "label":"X"}, "new_category": {"is_new": False, "label": ""} }, ] }
 
 
         categories.apply_changes(before['category'], data['category'], facet, category, create)
@@ -164,7 +164,7 @@ class TestChanges(unittest.TestCase):
           ]
         }
 
-        data = { "category":[ { "id":"3", "path":"N", "data": "8", "new_category": {"is_new": False, "label": ""} }, ] }
+        data = { "category":[ { "id":"3", "path":"N", "data":  {"_ref":"8", "label":"X"}, "new_category": {"is_new": False, "label": ""} }, ] }
 
 
         categories.apply_changes(before['category'], data['category'], facet, category, create)
@@ -220,7 +220,7 @@ class TestChanges(unittest.TestCase):
         }
         
 
-        data = { "category":[{ "id":"3", "path":"N", "data": "8", "new_category": {"is_new": False, "label": ""} },] }
+        data = { "category":[{ "id":"3", "path":"N", "data":  {"_ref":"8", "label":"X"}, "new_category": {"is_new": False, "label": ""} },] }
 
 
         actual, c = list(categories.apply_changes(before['category'], data['category'], facet, category, create))
@@ -252,7 +252,7 @@ class TestChanges(unittest.TestCase):
         }
         
 
-        data = { "category":[{ "id":"2", "path":"N", "data": "7", "new_category": {"is_new": False, "label": ""} },] }
+        data = { "category":[{ "id":"2", "path":"N", "data": { "_ref":"7", "label":"A" }, "new_category": {"is_new": False, "label": ""} },] }
 
 
         actual, c = list(categories.apply_changes(before['category'], data['category'], facet, category, create))
@@ -350,7 +350,7 @@ class TestChanges(unittest.TestCase):
         }
         
 
-        data = { "category":[{ "id":"5", "path":"N", "data": "10", "new_category": {"is_new": False, "label": None} },{ "id":"3", "path":"x", "data": "8", "new_category": {"is_new": False, "label": None} }] }
+        data = { "category":[{ "id":"5", "path":"N", "data": { "_ref":"10", "label":"Y" }, "new_category": {"is_new": False, "label": None} },{ "id":"3", "path":"x", "data":  { "_ref":"8", "label":"X" }, "new_category": {"is_new": False, "label": None} }] }
 
 
         actual, c = list(categories.apply_changes(before['category'], data['category'], facet, category, create))
@@ -447,13 +447,13 @@ class TestChanges(unittest.TestCase):
         expected = {
         "category":[ 
           { "id":"2", "path":"a", "data": { "_ref":"7", "label":"A" } },
-          { "id":"3", "path": "a.x", "data": "9" },
+          { "id":"3", "path": "a.x", "data": { "_ref":"9", "label":"P" } },
           { "id":"4", "path":"a.x.p", "data": { "_ref":"9", "label":"P" } },
           ]
         }
         
 
-        data = { "category":[{ "id":"3", "path":"x", "data": "9", "new_category": {"is_new": False, "label": None} },] }
+        data = { "category":[{ "id":"3", "path":"x", "data": { "_ref":"9", "label":"P" }, "new_category": {"is_new": False, "label": None} },] }
 
 
         actual, c = list(categories.apply_changes(before['category'], data['category'], facet, category, create))
