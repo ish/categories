@@ -12,7 +12,6 @@ def sort_categories(facet_data):
 
 
 def split_categories(categories, root_path, data):
-    # XXX parent comparison is incorrect.
     # Calculate root-related values.
     root_depth = len(root_path)
     # Setup some buckets to return items in.
@@ -21,9 +20,9 @@ def split_categories(categories, root_path, data):
     during = []
     current = before
     for c in categories:
-        path = c['path'].split('.')
+        path = _path(c['path'])
         depth = len(path)
-        if depth == root_depth+1 and path[:len(root_path)] == root_path:
+        if is_direct_child(root_path, path):
             current = during
         if depth > root_depth+1:
             current = after
@@ -54,16 +53,24 @@ def create_added_reference(facet_dict, root_path, data, create_category):
 
 def rename_path_segment(facet_dict, old_path, new_path, changelog):
     for c in facet_dict:
-        if c['path'].startswith(old_path):
+        if _is_descendent(old_path, c['path']):
             old = c['path']
+            # XXX this is wrong.
             c['path'] = c['path'].replace(old_path, new_path, 1)
             changelog.append( (old, c['path']) )
 
 
-def is_direct_child(root_path, c):
-    child_path = c['path'].split('.')
-    return len(child_path) == len(root_path)+1 and \
-            child_path[:len(root_path)] == root_path
+def _is_descendent(root_path, path):
+    root_path = _path(root_path)
+    path = _path(path)
+    return path[:len(root_path)] == root_path
+
+
+def is_direct_child(root_path, path):
+    root_path = _path(root_path)
+    path = _path(path)
+    return len(path) == len(root_path)+1 and \
+            path[:len(root_path)] == root_path
 
 
 def find_and_replace_changed_paths(old_facet_dict, data, root_path):
@@ -84,17 +91,16 @@ def find_and_replace_changed_paths(old_facet_dict, data, root_path):
 
 def find_deleted(old_facet_dict, data, root_path):
     root_path = _path(root_path)
-    # XXX parent comparison is incorrect.
     # Map to id for fast lookup.
     nc_by_id = dict((i['id'], i) for i in data)
     # List the deleted paths.
     deleted = [c['path'] for c in old_facet_dict
-               if is_direct_child(root_path, c) and c['id'] not in nc_by_id]
+               if is_direct_child(root_path, c['path']) and c['id'] not in nc_by_id]
     deleted_ids = []
     # List the deleted ids (anything that is below a deleted path).
     for cat in old_facet_dict:
         for d in deleted:
-            if cat['path'].startswith(d):
+            if _is_descendent(d, cat['path']):
                 deleted_ids.append(cat['id'])
     # XXX can't this be part of the above loop?
     for cat in old_facet_dict:
