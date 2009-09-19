@@ -1,9 +1,9 @@
-
 import uuid
 
 
 def cat_cmp(this, other):
     return cmp(this['path_segments'], other['path_segments'])
+
 
 def sort_categories(facet_data):
     data = facet_data['category']
@@ -15,6 +15,7 @@ def sort_categories(facet_data):
     for c in categories:
         del c['path_segments']
     return categories
+
 
 def split_categories(categories, root_path, data):
     before = []
@@ -33,8 +34,8 @@ def split_categories(categories, root_path, data):
         if depth > root_depth+1:
             current = after
         current.append(c)
-
     return before, during, after
+
 
 def find_added_category(facet_dict, root_path, data):
     added = []
@@ -43,8 +44,10 @@ def find_added_category(facet_dict, root_path, data):
             added.append(item)
     return added
 
+
 def _create_category(item):
     return '10'
+
 
 def create_added_reference(facet_dict, root_path, data, create_category):
     for n,item in enumerate(data):
@@ -58,7 +61,6 @@ def create_added_reference(facet_dict, root_path, data, create_category):
             data[n]['data'] = I
         else:
             I = item['data']
-            
         for d in facet_dict:
             if d['id'] == item['id']:
                 d['data'] = I
@@ -71,6 +73,7 @@ def rename_path_segment(facet_dict, old_path, new_path, changelog):
             c['path'] = c['path'].replace(old_path, new_path, 1)
             changelog.append( (old, c['path']) )
 
+
 def is_direct_child(root_path, c):
     facet_path = root_path.split('.')[0]
     path = '%s.%s'%(facet_path, c['path'])
@@ -81,6 +84,7 @@ def is_direct_child(root_path, c):
     if depth == root_depth+1 and path.startswith(root_path):
         return True
     return False
+
 
 def find_and_replace_changed_paths(old_facet_dict, data, base_category):
     oc_by_id = {}
@@ -98,6 +102,7 @@ def find_and_replace_changed_paths(old_facet_dict, data, base_category):
                 rename_path_segment(old_facet_dict, old_path, new_path, changelog)
     return changelog
 
+
 def find_deleted(old_facet_dict, data, root_path):
     nc_by_id = {}
     for nc in data:
@@ -114,6 +119,7 @@ def find_deleted(old_facet_dict, data, root_path):
     for cat in old_facet_dict:
         if cat['id'] not in deleted_ids:
             yield cat
+
 
 def reorder_from_data(old_facet_dict, data, facet, base_category):
     if base_category is not None:
@@ -140,9 +146,9 @@ def reorder_from_data(old_facet_dict, data, facet, base_category):
             yield {'id': uuid.uuid4().hex, 'data': d['data'], 'path': path}
     for d in after:
         yield d
+
         
 def apply_changes(old_facet_dict, data, facet, base_category, create_category):
-    
     if base_category is not None:
         root_path = '%s.%s'%(facet, base_category)
     else:
@@ -152,3 +158,4 @@ def apply_changes(old_facet_dict, data, facet, base_category, create_category):
     categories = list(find_deleted(old_facet_dict, data, root_path))
     categories = list(reorder_from_data(categories, data, facet, base_category))
     return categories, changelog
+
