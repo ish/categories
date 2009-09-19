@@ -64,15 +64,10 @@ def rename_path_segment(facet_dict, old_path, new_path, changelog):
 
 
 def is_direct_child(root_path, c):
-    facet_path = root_path.split('.')[0]
-    path = '%s.%s'%(facet_path, c['path'])
-    segments = path.split('.')
-    depth = len(segments)
-    root_segments = root_path.split('.')
-    root_depth = len(root_segments)
-    if depth == root_depth+1 and path.startswith(root_path):
-        return True
-    return False
+    parent_path = root_path.split('.')[1:]
+    child_path = c['path'].split('.')
+    return len(child_path) == len(parent_path)+1 and \
+            child_path[:len(parent_path)] == parent_path
 
 
 def find_and_replace_changed_paths(old_facet_dict, data, base_category):
