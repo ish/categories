@@ -3,7 +3,12 @@ from couchish import jsonutil
 
 import categories
 
-create = categories._create_category
+
+def create(item):
+    """
+    Dummy category creator.
+    """
+    return '10'
 
 
 facet_path = 'f'
