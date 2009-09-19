@@ -141,6 +141,39 @@ class Test(unittest.TestCase):
         categories.apply_changes(before['category'], data['category'], category, create)
         assert before == expected
 
+    def test_lenient_ordering(self):
+        # Do the right thing even if the children don't *immediately* follow
+        # the parent.
+        cats = [
+            {'id': 1, 'path': 'a', 'data': {'_ref': 10}},
+            {'id': 2, 'path': 'b', 'data': {'_ref': 11}},
+            {'id': 3, 'path': 'b.a', 'data': {'_ref': 12}},
+            {'id': 4, 'path': 'a.b', 'data': {'_ref': 13}},
+        ]
+        form_data = [
+            {'id': 3, 'path': 'a', 'data': {'_ref': 12}, 'new_category': {'is_new': False}},
+        ]
+        after, changelog = categories.apply_changes(cats, form_data, 'b', None)
+        print "*", cats
+        print "*", after
+        assert cats == after
+
+    def test_apply_no_changes_to_root(self):
+        cats = [
+            {'id': 1, 'path': 'a', 'data': {'_ref': 10}},
+            {'id': 2, 'path': 'b', 'data': {'_ref': 11}},
+            {'id': 3, 'path': 'c', 'data': {'_ref': 12}},
+        ]
+        form_data = [
+            {'id': 1, 'path': 'a', 'data': {'_ref': 10}, 'new_category': {'is_new': False}},
+            {'id': 2, 'path': 'b', 'data': {'_ref': 11}, 'new_category': {'is_new': False}},
+            {'id': 3, 'path': 'c', 'data': {'_ref': 12}, 'new_category': {'is_new': False}},
+        ]
+        after, changelog = categories.apply_changes(cats, form_data, '', None)
+        print "*", cats
+        print "*", after
+        assert cats == after
+
 
 class TestChanges(unittest.TestCase):
 

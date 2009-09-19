@@ -11,25 +11,6 @@ def sort_categories(facet_data):
     return categories
 
 
-def split_categories(categories, root_path, data):
-    # Calculate root-related values.
-    root_depth = len(root_path)
-    # Setup some buckets to return items in.
-    before = []
-    after = []
-    during = []
-    current = before
-    for c in categories:
-        path = _path(c['path'])
-        depth = len(path)
-        if is_direct_child(root_path, path):
-            current = during
-        if depth > root_depth+1:
-            current = after
-        current.append(c)
-    return before, during, after
-
-
 def find_added_category(facet_dict, root_path, data):
     return [i for i in data if i['id'] is None]
 
@@ -122,9 +103,14 @@ def _path(path):
 def reorder_from_data(old_facet_dict, data, root_path):
     # Map to id for fast lookup.
     data_by_id = dict((i['id'], i) for i in old_facet_dict)
-    before, during, after = split_categories(old_facet_dict, root_path, data)
-    for d in before:
-        yield d
+    cats = (cat for cat in old_facet_dict if not is_direct_child(root_path, cat['path']))
+    # Yield any categories up to the parent of the new data.
+    if root_path:
+        for cat in cats:
+            yield cat
+            if _path(cat['path']) == root_path:
+                break
+    # Yield new category data.
     for d in data:
         if d['id'] in data_by_id:
             fd = data_by_id[d['id']]
@@ -137,8 +123,10 @@ def reorder_from_data(old_facet_dict, data, root_path):
             else:
                 path = '.'.join(root_path+d['path'].split('.'))
             yield {'id': uuid.uuid4().hex, 'data': d['data'], 'path': path}
-    for d in after:
-        yield d
+    # Yield remaining categories.
+    for cat in cats:
+        yield cat
+    return
 
         
 def apply_changes(old_facet_dict, data, base_category, create_category):
