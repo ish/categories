@@ -14,19 +14,16 @@ def sort_categories(facet_data):
 def split_categories(categories, root_path, data):
     # XXX parent comparison is incorrect.
     # Calculate root-related values.
-    root_segments = root_path.split('.')
-    root_depth = len(root_segments)
-    facet_path = root_path.split('.')[0]
+    root_depth = len(root_path)
     # Setup some buckets to return items in.
     before = []
     after = []
     during = []
     current = before
     for c in categories:
-        path = '%s.%s'%(facet_path, c['path'])
-        segments = path.split('.')
-        depth = len(segments)
-        if depth == root_depth+1 and path.startswith(root_path):
+        path = c['path'].split('.')
+        depth = len(path)
+        if depth == root_depth+1 and path[:len(root_path)] == root_path:
             current = during
         if depth > root_depth+1:
             current = after
@@ -64,21 +61,20 @@ def rename_path_segment(facet_dict, old_path, new_path, changelog):
 
 
 def is_direct_child(root_path, c):
-    parent_path = root_path.split('.')[1:]
     child_path = c['path'].split('.')
-    return len(child_path) == len(parent_path)+1 and \
-            child_path[:len(parent_path)] == parent_path
+    return len(child_path) == len(root_path)+1 and \
+            child_path[:len(root_path)] == root_path
 
 
-def find_and_replace_changed_paths(old_facet_dict, data, base_category):
+def find_and_replace_changed_paths(old_facet_dict, data, root_path):
     # Map to id for fast lookup.
     oc_by_id = dict((i['id'], i) for i in old_facet_dict)
     changelog = []
     for d in data:
         if d['id'] in oc_by_id:
             old_path = oc_by_id[d['id']]['path']
-            if base_category is not None:
-                new_path = '%s.%s'%(base_category, d['path'])
+            if root_path:
+                new_path = '%s.%s'%('.'.join(root_path), d['path'])
             else:
                 new_path = d['path']
             if new_path != old_path:
@@ -87,6 +83,7 @@ def find_and_replace_changed_paths(old_facet_dict, data, base_category):
 
 
 def find_deleted(old_facet_dict, data, root_path):
+    root_path = _path(root_path)
     # XXX parent comparison is incorrect.
     # Map to id for fast lookup.
     nc_by_id = dict((i['id'], i) for i in data)
@@ -105,8 +102,18 @@ def find_deleted(old_facet_dict, data, root_path):
             yield cat
 
 
-def reorder_from_data(old_facet_dict, data, facet, base_category):
-    root_path = _root_path(facet, base_category)
+def _path(path):
+    """
+    Split a path (whatever it is) into a list of segments.
+    """
+    if isinstance(path, list):
+        return path
+    if not path:
+        return []
+    return path.split('.')
+
+
+def reorder_from_data(old_facet_dict, data, root_path):
     # Map to id for fast lookup.
     data_by_id = dict((i['id'], i) for i in old_facet_dict)
     before, during, after = split_categories(old_facet_dict, root_path, data)
@@ -119,27 +126,25 @@ def reorder_from_data(old_facet_dict, data, facet, base_category):
                 fd['data']=d['data']
             yield data_by_id[d['id']]
         else:
-            if base_category is None:
+            if not root_path:
                 path = d['path']
             else:
-                path = '%s.%s'%(base_category,d['path'])
+                path = '.'.join(root_path+d['path'].split('.'))
             yield {'id': uuid.uuid4().hex, 'data': d['data'], 'path': path}
     for d in after:
         yield d
 
         
-def apply_changes(old_facet_dict, data, facet, base_category, create_category):
-    root_path = _root_path(facet, base_category)
-    create_added_reference(old_facet_dict, root_path , data, create_category)
-    changelog = find_and_replace_changed_paths(old_facet_dict, data, base_category)
-    categories = list(find_deleted(old_facet_dict, data, root_path))
-    categories = list(reorder_from_data(categories, data, facet, base_category))
-    return categories, changelog
-
-
-def _root_path(facet, base_category):
-    if base_category is not None:
-        return '%s.%s'%(facet, base_category)
+def apply_changes(old_facet_dict, data, base_category, create_category):
+    # XXX The 'data' structure seems to be very form-oriented. Shouldn't it be
+    # in adminish really?
+    if base_category:
+        root_path = base_category.split('.')
     else:
-        return facet
+        root_path = []
+    create_added_reference(old_facet_dict, root_path , data, create_category)
+    changelog = find_and_replace_changed_paths(old_facet_dict, data, root_path)
+    categories = list(find_deleted(old_facet_dict, data, root_path))
+    categories = list(reorder_from_data(categories, data, root_path))
+    return categories, changelog
 

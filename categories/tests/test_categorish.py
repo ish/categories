@@ -11,7 +11,6 @@ def create(item):
     return '10'
 
 
-facet_path = 'f'
 old_facet_dict = {
 "category":[ 
   { "id":"2", "path":"a", "data": { "_ref":"7", "label":"A" } },
@@ -42,7 +41,7 @@ class Test(unittest.TestCase):
           ]
 
         data = { "category":[] }
-        root_path = 'f.a'
+        root_path = 'a'
         actual = list(categories.find_deleted(before['category'], data['category'], root_path))
         assert actual == expected
 
@@ -93,7 +92,6 @@ class Test(unittest.TestCase):
 
     def test_find_and_replace_pathchanges(self):
 
-        facet = 'f'
         category = 'a'
 
         before = {
@@ -119,7 +117,6 @@ class Test(unittest.TestCase):
 
     def test_applychanges(self):
 
-        facet = 'f'
         category = 'a'
 
         before = {
@@ -141,7 +138,7 @@ class Test(unittest.TestCase):
         data = { "category":[ { "id":"3", "path":"N", "data": {"_ref":"8", "label":"X"}, "new_category": {"is_new": False, "label": ""} }, ] }
 
 
-        categories.apply_changes(before['category'], data['category'], facet, category, create)
+        categories.apply_changes(before['category'], data['category'], category, create)
         assert before == expected
 
 
@@ -150,7 +147,6 @@ class TestChanges(unittest.TestCase):
 
     def test_addition(self):
 
-        facet = 'f'
         category = 'a'
 
         before = {
@@ -172,13 +168,12 @@ class TestChanges(unittest.TestCase):
         data = { "category":[ { "id":"3", "path":"N", "data":  {"_ref":"8", "label":"X"}, "new_category": {"is_new": False, "label": ""} }, ] }
 
 
-        categories.apply_changes(before['category'], data['category'], facet, category, create)
+        categories.apply_changes(before['category'], data['category'], category, create)
         assert before == expected
 
 
     def test_deletion(self):
 
-        facet = 'f'
         category = 'a'
 
         before = {
@@ -195,7 +190,7 @@ class TestChanges(unittest.TestCase):
 
         data = { "category":[] }
 
-        actual, c = list(categories.apply_changes(before['category'], data['category'], facet, category, create))
+        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
         print 'ACTUAL'
         print actual
         print 'EXPECTED'
@@ -205,7 +200,6 @@ class TestChanges(unittest.TestCase):
 
     def test_pathchange(self):
 
-        facet = 'f'
         category = 'a'
 
         before = {
@@ -228,7 +222,7 @@ class TestChanges(unittest.TestCase):
         data = { "category":[{ "id":"3", "path":"N", "data":  {"_ref":"8", "label":"X"}, "new_category": {"is_new": False, "label": ""} },] }
 
 
-        actual, c = list(categories.apply_changes(before['category'], data['category'], facet, category, create))
+        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
         print 'ACTUAL'
         print actual
         print 'EXPECTED'
@@ -237,7 +231,6 @@ class TestChanges(unittest.TestCase):
 
     def test_pathchange_rootcategory(self):
 
-        facet = 'f'
         category = None
 
         before = {
@@ -260,7 +253,7 @@ class TestChanges(unittest.TestCase):
         data = { "category":[{ "id":"2", "path":"N", "data": { "_ref":"7", "label":"A" }, "new_category": {"is_new": False, "label": ""} },] }
 
 
-        actual, c = list(categories.apply_changes(before['category'], data['category'], facet, category, create))
+        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
         print 'ACTUAL'
         print actual
         print 'EXPECTED'
@@ -269,7 +262,6 @@ class TestChanges(unittest.TestCase):
         
     def test_new_ref(self):
 
-        facet = 'f'
         category = 'a'
 
         before = {
@@ -292,7 +284,7 @@ class TestChanges(unittest.TestCase):
         data = { "category":[{ "id":"3", "path":"x", "data": None, "new_category": {"is_new": True, "label": "FooBar"} },] }
 
 
-        actual, c = list(categories.apply_changes(before['category'], data['category'], facet, category, create))
+        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
         print 'ACTUAL'
         print actual
         print 'EXPECTED'
@@ -301,7 +293,6 @@ class TestChanges(unittest.TestCase):
         
     def test_new_ref2(self):
 
-        facet = 'f'
         category = 'a'
 
         before = {
@@ -324,7 +315,7 @@ class TestChanges(unittest.TestCase):
         data = { "category":[{ "id":"3", "path":"N", "data": None, "new_category": {"is_new": True, "label": "FooBar"} },] }
 
 
-        actual, c = list(categories.apply_changes(before['category'], data['category'], facet, category, create))
+        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
         print 'ACTUAL'
         print actual
         print 'EXPECTED'
@@ -333,7 +324,6 @@ class TestChanges(unittest.TestCase):
 
     def test_reorder(self):
 
-        facet = 'f'
         category = 'a'
 
         before = {
@@ -358,7 +348,7 @@ class TestChanges(unittest.TestCase):
         data = { "category":[{ "id":"5", "path":"N", "data": { "_ref":"10", "label":"Y" }, "new_category": {"is_new": False, "label": None} },{ "id":"3", "path":"x", "data":  { "_ref":"8", "label":"X" }, "new_category": {"is_new": False, "label": None} }] }
 
 
-        actual, c = list(categories.apply_changes(before['category'], data['category'], facet, category, create))
+        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
         print 'ACTUAL'
         print actual
         print 'EXPECTED'
@@ -367,7 +357,6 @@ class TestChanges(unittest.TestCase):
 
     def test_addnew(self):
 
-        facet = 'f'
         category = None
 
         before = {'category': [{'path': 'uk', 'data': {'_ref': '0bf538d1c8b272fddde23068b52f2463', 'label': 'UK'}, 'id': '0bf538d1c8b272fddde23068b52f2463'}, {'path': 'uk.england', 'data': {'_ref': '59a6432dd70cbbd967f410f3f0e0c649', 'label': 'England'}, 'id': '59a6432dd70cbbd967f410f3f0e0c649'}, {'path': 'uk.england.lakedistrict', 'data': {'_ref': '383a3106a48a5ff1cf8aeb5aa2a57444', 'label': 'Lake District'}, 'id': '383a3106a48a5ff1cf8aeb5aa2a57444'}] }
@@ -391,7 +380,7 @@ class TestChanges(unittest.TestCase):
           'path': u'france'}]}
 
        
-        actual, c = list(categories.apply_changes(before['category'], data['category'], facet, category, create))
+        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
         expected['category'][1]['id'] = actual[1]['id']
         print 'ACTUAL'
         print actual
@@ -401,7 +390,6 @@ class TestChanges(unittest.TestCase):
 
     def test_addnew_nonroot(self):
 
-        facet = 'f'
         category = 'uk'
 
         before = {'category': [
@@ -428,7 +416,7 @@ class TestChanges(unittest.TestCase):
           'path': u'ireland'}]}
 
        
-        actual, c = list(categories.apply_changes(before['category'], data['category'], facet, category, create))
+        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
         expected['category'][2]['id'] = actual[2]['id']
         print 'ACTUAL'
         print actual
@@ -438,7 +426,6 @@ class TestChanges(unittest.TestCase):
 
     def test_new_ref(self):
 
-        facet = 'f'
         category = 'a'
 
         before = {
@@ -461,7 +448,7 @@ class TestChanges(unittest.TestCase):
         data = { "category":[{ "id":"3", "path":"x", "data": { "_ref":"9", "label":"P" }, "new_category": {"is_new": False, "label": None} },] }
 
 
-        actual, c = list(categories.apply_changes(before['category'], data['category'], facet, category, create))
+        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
         print 'ACTUAL'
         print actual
         print 'EXPECTED'
