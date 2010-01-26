@@ -151,4 +151,5 @@ def apply_changes(old_facet_dict, data, facet, base_category, create_category):
     changelog = find_and_replace_changed_paths(old_facet_dict, data, base_category)
     categories = list(find_deleted(old_facet_dict, data, root_path))
     categories = list(reorder_from_data(categories, data, facet, base_category))
+    categories.sort(lambda x, y: cmp(len(x['path'].split('.')), len(y['path'].split('.'))))
     return categories, changelog
