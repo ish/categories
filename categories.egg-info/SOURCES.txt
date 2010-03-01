@@ -1,9 +1,0 @@
-setup.cfg
-setup.py
-categories/__init__.py
-categories.egg-info/PKG-INFO
-categories.egg-info/SOURCES.txt
-categories.egg-info/dependency_links.txt
-categories.egg-info/entry_points.txt
-categories.egg-info/not-zip-safe
-categories.egg-info/top_level.txt
