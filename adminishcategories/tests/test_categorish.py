@@ -1,7 +1,7 @@
 import unittest
 from couchish import jsonutil
 
-import categories
+import adminish-categories
 
 
 def create(item):
@@ -42,7 +42,7 @@ class Test(unittest.TestCase):
 
         data = { "category":[] }
         root_path = 'a'
-        actual = list(categories.find_deleted(before['category'], data['category'], root_path))
+        actual = list(adminish-categories.find_deleted(before['category'], data['category'], root_path))
         assert actual == expected
 
 
@@ -66,7 +66,7 @@ class Test(unittest.TestCase):
 
         data = { "category":[ { "id":"3", "path":"x", "data": None, "new_category": {"is_new": True, "label": "Z"} }, ] }
 
-        categories.create_added_reference(before['category'], 'f.a', data['category'], create)
+        adminish-categories.create_added_reference(before['category'], 'f.a', data['category'], create)
         assert before == expected
 
     def test_pathchange(self):
@@ -87,7 +87,7 @@ class Test(unittest.TestCase):
           ]
         }
 
-        categories.rename_path_segment(before['category'], 'a.x', 'a.N', [])
+        adminish-categories.rename_path_segment(before['category'], 'a.x', 'a.N', [])
         assert before == expected
 
     def test_find_and_replace_pathchanges(self):
@@ -112,7 +112,7 @@ class Test(unittest.TestCase):
 
         data = { "category":[ { "id":"3", "path":"N", "data": {"_ref":"8", "label":"X"}, "new_category": {"is_new": False, "label": ""} }, ] }
 
-        categories.find_and_replace_changed_paths(before['category'], data['category'], category)
+        adminish-categories.find_and_replace_changed_paths(before['category'], data['category'], category)
         assert before == expected
 
     def test_applychanges(self):
@@ -138,7 +138,7 @@ class Test(unittest.TestCase):
         data = { "category":[ { "id":"3", "path":"N", "data": {"_ref":"8", "label":"X"}, "new_category": {"is_new": False, "label": ""} }, ] }
 
 
-        categories.apply_changes(before['category'], data['category'], category, create)
+        adminish-categories.apply_changes(before['category'], data['category'], category, create)
         assert before == expected
 
     def test_lenient_ordering(self):
@@ -153,7 +153,7 @@ class Test(unittest.TestCase):
         form_data = [
             {'id': 3, 'path': 'a', 'data': {'_ref': 12}, 'new_category': {'is_new': False}},
         ]
-        after, changelog = categories.apply_changes(cats, form_data, 'b', None)
+        after, changelog = adminish-categories.apply_changes(cats, form_data, 'b', None)
         print "*", cats
         print "*", after
         assert cats == after
@@ -169,7 +169,7 @@ class Test(unittest.TestCase):
             {'id': 2, 'path': 'b', 'data': {'_ref': 11}, 'new_category': {'is_new': False}},
             {'id': 3, 'path': 'c', 'data': {'_ref': 12}, 'new_category': {'is_new': False}},
         ]
-        after, changelog = categories.apply_changes(cats, form_data, '', None)
+        after, changelog = adminish-categories.apply_changes(cats, form_data, '', None)
         print "*", cats
         print "*", after
         assert cats == after
@@ -201,7 +201,7 @@ class TestChanges(unittest.TestCase):
         data = { "category":[ { "id":"3", "path":"N", "data":  {"_ref":"8", "label":"X"}, "new_category": {"is_new": False, "label": ""} }, ] }
 
 
-        categories.apply_changes(before['category'], data['category'], category, create)
+        adminish-categories.apply_changes(before['category'], data['category'], category, create)
         assert before == expected
 
 
@@ -223,7 +223,7 @@ class TestChanges(unittest.TestCase):
 
         data = { "category":[] }
 
-        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
+        actual, c = list(adminish-categories.apply_changes(before['category'], data['category'], category, create))
         print 'ACTUAL'
         print actual
         print 'EXPECTED'
@@ -255,7 +255,7 @@ class TestChanges(unittest.TestCase):
         data = { "category":[{ "id":"3", "path":"N", "data":  {"_ref":"8", "label":"X"}, "new_category": {"is_new": False, "label": ""} },] }
 
 
-        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
+        actual, c = list(adminish-categories.apply_changes(before['category'], data['category'], category, create))
         print 'ACTUAL'
         print actual
         print 'EXPECTED'
@@ -286,7 +286,7 @@ class TestChanges(unittest.TestCase):
         data = { "category":[{ "id":"2", "path":"N", "data": { "_ref":"7", "label":"A" }, "new_category": {"is_new": False, "label": ""} },] }
 
 
-        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
+        actual, c = list(adminish-categories.apply_changes(before['category'], data['category'], category, create))
         print 'ACTUAL'
         print actual
         print 'EXPECTED'
@@ -317,7 +317,7 @@ class TestChanges(unittest.TestCase):
         data = { "category":[{ "id":"3", "path":"x", "data": None, "new_category": {"is_new": True, "label": "FooBar"} },] }
 
 
-        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
+        actual, c = list(adminish-categories.apply_changes(before['category'], data['category'], category, create))
         print 'ACTUAL'
         print actual
         print 'EXPECTED'
@@ -348,7 +348,7 @@ class TestChanges(unittest.TestCase):
         data = { "category":[{ "id":"3", "path":"N", "data": None, "new_category": {"is_new": True, "label": "FooBar"} },] }
 
 
-        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
+        actual, c = list(adminish-categories.apply_changes(before['category'], data['category'], category, create))
         print 'ACTUAL'
         print actual
         print 'EXPECTED'
@@ -381,7 +381,7 @@ class TestChanges(unittest.TestCase):
         data = { "category":[{ "id":"5", "path":"N", "data": { "_ref":"10", "label":"Y" }, "new_category": {"is_new": False, "label": None} },{ "id":"3", "path":"x", "data":  { "_ref":"8", "label":"X" }, "new_category": {"is_new": False, "label": None} }] }
 
 
-        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
+        actual, c = list(adminish-categories.apply_changes(before['category'], data['category'], category, create))
         print 'ACTUAL'
         print actual
         print 'EXPECTED'
@@ -413,7 +413,7 @@ class TestChanges(unittest.TestCase):
           'path': u'france'}]}
 
        
-        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
+        actual, c = list(adminish-categories.apply_changes(before['category'], data['category'], category, create))
         expected['category'][1]['id'] = actual[1]['id']
         print 'ACTUAL'
         print actual
@@ -449,7 +449,7 @@ class TestChanges(unittest.TestCase):
           'path': u'ireland'}]}
 
        
-        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
+        actual, c = list(adminish-categories.apply_changes(before['category'], data['category'], category, create))
         expected['category'][2]['id'] = actual[2]['id']
         print 'ACTUAL'
         print actual
@@ -481,7 +481,7 @@ class TestChanges(unittest.TestCase):
         data = { "category":[{ "id":"3", "path":"x", "data": { "_ref":"9", "label":"P" }, "new_category": {"is_new": False, "label": None} },] }
 
 
-        actual, c = list(categories.apply_changes(before['category'], data['category'], category, create))
+        actual, c = list(adminish-categories.apply_changes(before['category'], data['category'], category, create))
         print 'ACTUAL'
         print actual
         print 'EXPECTED'
